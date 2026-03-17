@@ -1,6 +1,21 @@
 # Semrush MCP Server
 
-A Model Context Protocol (MCP) server implementation that provides tools for accessing Semrush API data.
+> **Looking for the official Semrush MCP?** Semrush now offers a hosted MCP connector with no setup required — just point your AI client to `https://mcp.semrush.com/v1/mcp` and authenticate with your Semrush account. No cloning, no API keys, no local server.
+>
+> - [What is Semrush MCP?](https://www.semrush.com/kb/1618-mcp)
+> - [Getting Started with MCP](https://www.semrush.com/kb/1619-getting-started-with-mcp)
+
+A community-maintained MCP server that provides tools for accessing Semrush API data. This is an independent, open-source project and is not affiliated with or endorsed by Semrush.
+
+## Why Use This Instead?
+
+This self-hosted server is for users who need more control than the official hosted connector provides:
+
+- **Full control over API calls and caching** — configure TTL, inspect raw responses
+- **Custom rate limiting** — set your own requests-per-second limits
+- **Self-hosted / air-gapped** — runs entirely on your machine, no external MCP endpoint
+- **Granular tool selection** — 19 discrete tools with documented parameters and API unit costs
+- **Open source** — MIT licensed, fork and customize to your needs
 
 ## Features
 
