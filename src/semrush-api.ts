@@ -82,6 +82,9 @@ export class SemrushApiError extends Error {
 
 const MAX_RETRIES = 3
 
+// Common export column sets
+const KEYWORD_DETAIL_COLUMNS = 'Ph,Nq,Cp,Co,Nr,Td,In,Kd'
+
 // Main API client
 export class SemrushApiClient {
   private readonly apiKey: string
@@ -97,12 +100,32 @@ export class SemrushApiClient {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
+  // Extract a nested error message from Axios response data
+  private extractAxiosErrorMessage(error: AxiosError): string {
+    const responseData: unknown = error.response?.data
+    if (typeof responseData !== 'object' || responseData === null || !('error' in responseData)) {
+      return error.message
+    }
+    const errorField: unknown = (responseData as Record<string, unknown>).error
+    if (typeof errorField !== 'object' || errorField === null || !('message' in errorField)) {
+      return error.message
+    }
+    const nestedMsg: unknown = (errorField as Record<string, unknown>).message
+    return typeof nestedMsg === 'string' ? nestedMsg : error.message
+  }
+
+  // Determine whether a failed request should be retried
+  private shouldRetry(status: number, retryCount: number): boolean {
+    const RETRYABLE = [429, 500, 502, 503, 504]
+    return RETRYABLE.includes(status) && retryCount < MAX_RETRIES
+  }
+
   // Make API request with caching, rate limiting, and retry with exponential backoff
   private async makeRequest(
     url: string,
     params: ApiQueryParams = {},
     options: AxiosRequestConfig = {},
-    retryCount?: number
+    retryCount = 0
   ): Promise<SemrushApiResponse> {
     // Add API key to parameters
     const requestParams: ApiQueryParams = {
@@ -146,23 +169,10 @@ export class SemrushApiClient {
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         const status = error.response?.status ?? 500
-        // Extract error message from Axios response data safely
-        const responseData: unknown = error.response?.data
-        let message: string = error.message
-        if (typeof responseData === 'object' && responseData !== null && 'error' in responseData) {
-          const errorField: unknown = (responseData as Record<string, unknown>).error
-          if (typeof errorField === 'object' && errorField !== null && 'message' in errorField) {
-            const nestedMsg: unknown = (errorField as Record<string, unknown>).message
-            if (typeof nestedMsg === 'string') {
-              message = nestedMsg
-            }
-          }
-        }
+        const message = this.extractAxiosErrorMessage(error)
 
-        // Retry on 429 (rate limit) and 5xx (server errors) with exponential backoff
-        const RETRYABLE = [429, 500, 502, 503, 504]
-        if (RETRYABLE.includes(status) && (retryCount ?? 0) < MAX_RETRIES) {
-          const attempt = (retryCount ?? 0) + 1
+        if (this.shouldRetry(status, retryCount)) {
+          const attempt = retryCount + 1
           const delay = attempt * 2000 // 2s, 4s, 6s
           logger.warn(
             `API request failed (${status}), retrying in ${delay}ms (attempt ${attempt}/${MAX_RETRIES})...`
@@ -318,7 +328,7 @@ export class SemrushApiClient {
       type: 'phrase_this',
       phrase: keyword,
       database,
-      export_columns: 'Ph,Nq,Cp,Co,Nr,Td,In,Kd',
+      export_columns: KEYWORD_DETAIL_COLUMNS,
     })
   }
 
@@ -328,7 +338,7 @@ export class SemrushApiClient {
       type: 'phrase_these',
       phrase: keywords.join(';'),
       database,
-      export_columns: 'Ph,Nq,Cp,Co,Nr,Td,In,Kd',
+      export_columns: KEYWORD_DETAIL_COLUMNS,
     })
   }
 
@@ -422,7 +432,7 @@ export class SemrushApiClient {
       type: 'phrase_questions',
       phrase: keyword,
       database,
-      export_columns: 'Ph,Nq,Cp,Co,Nr,Td,In,Kd',
+      export_columns: KEYWORD_DETAIL_COLUMNS,
     }
 
     if (limit) {
