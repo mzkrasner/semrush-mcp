@@ -163,13 +163,140 @@ Running it from your terminal:
 SEMRUSH_API_KEY=your-api-key npx -y github:mrkooblu/semrush-mcp
 ```
 
-## Development
+## CLI Installation
 
-To run the server in development mode:
+This package also provides a `semrush` CLI for direct terminal usage alongside the MCP server.
+
+### Install globally from GitHub
 
 ```bash
-npm run dev
+npm install -g github:mrkooblu/semrush-mcp
 ```
+
+### Or clone and link locally
+
+```bash
+git clone https://github.com/mrkooblu/semrush-mcp.git
+cd semrush-mcp
+npm install && npm run build && npm link
+```
+
+After installation, two commands are available:
+- `semrush-mcp` — starts the MCP server on stdio
+- `semrush` — runs the CLI
+
+## CLI Usage
+
+All commands support `-d, --database <db>` (country code, default: us), `-l, --limit <n>`, and `-f, --format <text|json>`.
+
+### Quick Overview
+
+Auto-detects keyword vs domain:
+
+```bash
+semrush q "seo tools"              # Keyword overview
+semrush q example.com              # Domain overview
+```
+
+### Keyword Research
+
+```bash
+semrush kw "content marketing"                  # Basic overview
+semrush kw "seo" --related -l 20                # Related keywords
+semrush kw "marketing" --questions -l 10        # Question-based keywords
+semrush kw "email marketing" --broad -l 15      # Broad match keywords
+semrush kw "seo tools" --organic -l 10          # SERP organic results
+semrush kw "ppc software" --paid -l 10          # SERP paid results
+```
+
+### Batch Keyword Difficulty
+
+```bash
+semrush kd "seo" "content marketing" "link building"
+```
+
+### Domain Analytics
+
+```bash
+semrush d semrush.com                           # Domain overview
+semrush d example.com --organic -l 30           # Organic keywords
+semrush d example.com --paid -l 20              # Paid keywords
+semrush d example.com --competitors -l 10       # Competitors
+```
+
+### Backlinks
+
+```bash
+semrush bl example.com                          # Backlink overview
+semrush bl example.com --domains -l 20          # Referring domains
+```
+
+### Traffic Analytics
+
+Requires .Trends API subscription.
+
+```bash
+semrush traffic example.com                     # Traffic summary
+semrush traffic example.com --sources           # Traffic sources
+```
+
+### Keyword Gap Analysis
+
+```bash
+semrush gaps mysite.com competitor.com -l 50
+```
+
+### API Units Balance
+
+```bash
+semrush units
+```
+
+## Development
+
+### Setup
+
+```bash
+git clone https://github.com/mrkooblu/semrush-mcp.git
+cd semrush-mcp
+npm install
+cp .env.example .env
+# Edit .env and add your SEMRUSH_API_KEY
+```
+
+### Running in dev mode
+
+```bash
+npm run dev          # Start MCP server with tsx (hot reload)
+```
+
+### Building
+
+```bash
+npm run build        # Compile TypeScript to dist/
+```
+
+### Testing
+
+```bash
+npm test                  # Run all tests
+npm run test:unit         # Unit tests only (no API key needed)
+npm run test:integration  # Integration tests (requires SEMRUSH_API_KEY)
+```
+
+### Linting and Formatting
+
+```bash
+npm run lint         # ESLint
+npm run format       # Prettier
+```
+
+### Git Hooks
+
+This project uses [Husky](https://typicode.github.io/husky/) for git hooks:
+
+- **Pre-commit**: Runs lint-staged, ESLint, TypeScript type-check, unit tests, and secret detection. Runs automatically on `git commit`.
+- **Pre-push**: Verifies no uncommitted changes, runs a full build, and runs integration tests (requires `SEMRUSH_API_KEY`). Runs automatically on `git push`.
 
 ## Security Notes
 
