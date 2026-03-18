@@ -192,8 +192,10 @@ describe('API Spec Regression Tests', () => {
 
           expect(actualHeaders).toEqual(ep.responseColumns)
         } catch (error: any) {
+          // Only skip on auth/subscription errors (401/403).
+          // 400 errors may indicate a spec regression (wrong params) and should fail.
           const status = error?.response?.status ?? 0
-          if (status === 403 || status === 401 || status === 400) {
+          if (status === 403 || status === 401) {
             console.log(`[SKIP] ${ep.operationId}: Trends subscription required (HTTP ${status})`)
             return
           }
@@ -217,18 +219,20 @@ describe('API Spec Regression Tests', () => {
           const actualKeys = parseJsonKeys(response)
           const expectedSchema = ep.responseSchema
 
+          // Empty array responses are valid -- skip key assertions
+          if (actualKeys.length === 0) {
+            console.log(`[SKIP] ${ep.operationId}: empty response (no items to check keys)`)
+            return
+          }
+
           if (expectedSchema.type === 'array' && expectedSchema.items?.properties) {
             const expectedKeys = Object.keys(expectedSchema.items.properties).sort()
-            for (const key of expectedKeys) {
-              expect(actualKeys).toContain(key)
-            }
-            console.log(`[PASS] ${ep.operationId}: keys include ${expectedKeys.join(', ')}`)
+            expect(actualKeys).toEqual(expectedKeys)
+            console.log(`[PASS] ${ep.operationId}: keys match ${expectedKeys.join(', ')}`)
           } else if (expectedSchema.properties) {
             const expectedKeys = Object.keys(expectedSchema.properties).sort()
-            for (const key of expectedKeys) {
-              expect(actualKeys).toContain(key)
-            }
-            console.log(`[PASS] ${ep.operationId}: keys include ${expectedKeys.join(', ')}`)
+            expect(actualKeys).toEqual(expectedKeys)
+            console.log(`[PASS] ${ep.operationId}: keys match ${expectedKeys.join(', ')}`)
           }
         } catch (error: any) {
           const status = error?.response?.status ?? 0
@@ -258,10 +262,8 @@ describe('API Spec Regression Tests', () => {
 
           if (expectedSchema.properties) {
             const expectedKeys = Object.keys(expectedSchema.properties).sort()
-            for (const key of expectedKeys) {
-              expect(actualKeys).toContain(key)
-            }
-            console.log(`[PASS] ${ep.operationId}: keys include ${expectedKeys.join(', ')}`)
+            expect(actualKeys).toEqual(expectedKeys)
+            console.log(`[PASS] ${ep.operationId}: keys match ${expectedKeys.join(', ')}`)
           }
         } catch (error: any) {
           const status = error?.response?.status ?? 0
