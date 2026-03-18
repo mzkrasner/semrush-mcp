@@ -14,6 +14,7 @@ import { z } from 'zod'
 const PROJECT_ID_MSG = 'Project ID is required'
 const URL_REQUIRED_MSG = 'URL is required'
 const SUBFOLDER_MSG = 'Subfolder is required (e.g. domain.com/blog/)'
+const TARGET_DOMAIN_MSG = 'Target domain is required'
 
 // Reusable project_id field
 const projectIdField = z.number().positive(PROJECT_ID_MSG)
@@ -175,7 +176,7 @@ export type TrafficDomainParams = z.infer<typeof TrafficDomainParamsSchema>
 
 /** Trends endpoints that support device_type */
 export const TrendsTargetParamsSchema = z.object({
-  target: z.string().min(1, 'Target domain is required'),
+  target: z.string().min(1, TARGET_DOMAIN_MSG),
   country: z.string().optional().default('us'),
   device_type: z.enum(['desktop', 'mobile']).optional(),
   display_date: z.string().optional(),
@@ -193,9 +194,19 @@ export const TrendsAudienceInsightsParamsSchema = z.object({
 
 export type TrendsAudienceInsightsParams = z.infer<typeof TrendsAudienceInsightsParamsSchema>
 
+/** Trends purchase conversion endpoint (desktop only, no device_type param) */
+export const TrendsPurchaseConversionParamsSchema = z.object({
+  target: z.string().min(1, TARGET_DOMAIN_MSG),
+  country: z.string().optional().default('us'),
+  display_date: z.string().optional(),
+  limit: z.number().positive().optional(),
+})
+
+export type TrendsPurchaseConversionParams = z.infer<typeof TrendsPurchaseConversionParamsSchema>
+
 /** Trends accuracy endpoint (no country/device_type) */
 export const TrendsAccuracyParamsSchema = z.object({
-  target: z.string().min(1, 'Target domain is required'),
+  target: z.string().min(1, TARGET_DOMAIN_MSG),
   display_date: z.string().optional(),
   limit: z.number().positive().optional(),
 })
@@ -282,9 +293,13 @@ export type SiteAuditLaunchParams = z.infer<typeof SiteAuditLaunchParamsSchema>
 // Utility Schemas
 // ============================================================================
 
-export const CheckParamsSchema = z.object({
-  check: z.boolean(),
-})
+/** Empty schema for tools that take no parameters */
+export const EmptyParamsSchema = z.object({})
+
+export type EmptyParams = z.infer<typeof EmptyParamsSchema>
+
+/** @deprecated Use EmptyParamsSchema instead */
+export const CheckParamsSchema = EmptyParamsSchema
 
 export type CheckParams = z.infer<typeof CheckParamsSchema>
 

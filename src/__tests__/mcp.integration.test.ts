@@ -14,14 +14,50 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 const SERVER_PATH = resolve(import.meta.dirname, '../../dist/index.js')
 
-/** All 19 expected MCP tool names */
+/** All 77 expected MCP tool names */
 const EXPECTED_TOOL_NAMES = [
+  // Domain tools
   'semrush_domain_overview',
+  'semrush_domain_rank',
+  'semrush_domain_rank_history',
+  'semrush_rank_difference',
   'semrush_domain_organic_keywords',
   'semrush_domain_paid_keywords',
   'semrush_competitors',
+  'semrush_paid_competitors',
+  'semrush_domain_ads_history',
+  'semrush_domain_organic_unique',
+  'semrush_domain_adwords_unique',
+  'semrush_domain_shopping',
+  'semrush_domain_shopping_unique',
+  // URL tools
+  'semrush_url_organic',
+  'semrush_url_adwords',
+  'semrush_url_rank',
+  'semrush_url_rank_history',
+  'semrush_url_ranks',
+  // Subdomain tools
+  'semrush_subdomain_rank',
+  'semrush_subdomain_ranks',
+  'semrush_subdomain_rank_history',
+  'semrush_subdomain_organic',
+  // Subfolder tools
+  'semrush_subfolder_organic',
+  'semrush_subfolder_adwords',
+  'semrush_subfolder_rank',
+  'semrush_subfolder_ranks',
+  'semrush_subfolder_rank_history',
+  'semrush_subfolder_organic_unique',
+  'semrush_subfolder_adwords_unique',
+  // Backlinks tools
   'semrush_backlinks',
   'semrush_backlinks_domains',
+  'semrush_backlinks_overview',
+  'semrush_backlinks_pages',
+  'semrush_backlinks_anchors',
+  'semrush_backlinks_tld',
+  'semrush_backlinks_categories',
+  // Keyword tools
   'semrush_keyword_overview',
   'semrush_related_keywords',
   'semrush_keyword_overview_single_db',
@@ -32,8 +68,40 @@ const EXPECTED_TOOL_NAMES = [
   'semrush_broad_match_keywords',
   'semrush_phrase_questions',
   'semrush_keyword_difficulty',
+  // Traffic/Trends tools
   'semrush_traffic_summary',
   'semrush_traffic_sources',
+  'semrush_traffic_destinations',
+  'semrush_traffic_geo',
+  'semrush_traffic_subdomains',
+  'semrush_traffic_subfolders',
+  'semrush_traffic_top_pages',
+  'semrush_traffic_rank',
+  'semrush_traffic_social_media',
+  'semrush_audience_insights',
+  'semrush_purchase_conversion',
+  'semrush_household_distribution',
+  'semrush_income_distribution',
+  'semrush_education_distribution',
+  'semrush_occupation_distribution',
+  'semrush_audience_interests',
+  'semrush_traffic_accuracy',
+  // Projects tools
+  'semrush_list_projects',
+  'semrush_get_project',
+  'semrush_create_project',
+  'semrush_update_project',
+  'semrush_delete_project',
+  // Site Audit tools
+  'semrush_site_audit_info',
+  'semrush_site_audit_snapshots',
+  'semrush_site_audit_snapshot_detail',
+  'semrush_site_audit_issues',
+  'semrush_site_audit_pages',
+  'semrush_site_audit_page_detail',
+  'semrush_site_audit_history',
+  'semrush_site_audit_launch',
+  // Utility
   'semrush_api_units_balance',
 ]
 
@@ -147,7 +215,7 @@ describe('MCP Server — stdio Integration', () => {
     )
   }, 15000)
 
-  it('lists all 19 tools via tools/list', async () => {
+  it('lists all 77 tools via tools/list', async () => {
     const response = await sendRpcMessage('tools/list', {})
 
     expect(response).toBeDefined()
@@ -158,8 +226,8 @@ describe('MCP Server — stdio Integration', () => {
     const toolNames = response.result.tools.map((t: { name: string }) => t.name)
     console.log(`MCP server exposes ${toolNames.length} tools:`, toolNames)
 
-    // Verify all 19 expected tools are present
-    expect(toolNames.length).toBe(19)
+    // Verify all 77 expected tools are present
+    expect(toolNames.length).toBe(EXPECTED_TOOL_NAMES.length)
     for (const expectedName of EXPECTED_TOOL_NAMES) {
       expect(toolNames).toContain(expectedName)
     }

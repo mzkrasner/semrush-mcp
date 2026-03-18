@@ -42,15 +42,20 @@ semrush backlinks semrush.com        # Backlink analysis
 
 ## Features
 
-- **Domain Analytics** — Domain overview, organic and paid keywords, competitor analysis
-- **Keyword Research** — Keyword overview, related keywords, broad match, question-based keywords, SERP organic and paid results, ads history
-- **Backlink Analysis** — Backlink data, referring domains
-- **Traffic Analytics** — Traffic summary, traffic sources (requires .Trends subscription)
-- **Keyword Gap Analysis** — Compare two domains' keyword profiles side by side
-- **Keyword Difficulty** — Batch difficulty scoring for multiple keywords
+- **Domain Analytics** — Overview, rank tracking, rank history, organic/paid keywords, competitors, ads history, shopping, unique pages
+- **URL Analytics** — Organic/paid keywords, rank, rank history per URL
+- **Subdomain Analytics** — Rank, rank history, organic keywords per subdomain
+- **Subfolder Analytics** — Organic/paid keywords, rank, rank history, unique pages per subfolder
+- **Keyword Research** — Overview, related keywords, broad match, questions, SERP organic/paid results, ads history, difficulty
+- **Backlink Analysis** — Backlinks, referring domains, overview, pages, anchors, TLD distribution, categories
+- **Traffic Analytics** — Summary, sources, destinations, geo, subdomains, subfolders, top pages, rank, social media (requires .Trends)
+- **Audience Intelligence** — Audience insights, demographics, purchase conversion, interests (requires .Trends)
+- **Projects API** — List, create, update, delete projects
+- **Site Audit** — Audit info, snapshots, issues, pages, history, launch crawls
+- **Keyword Gap Analysis** — Compare two domains' keyword profiles side by side (CLI only)
 - **API Units Balance** — Check remaining API credits
 
-All capabilities are available through both the MCP server (19 tools) and the CLI.
+All capabilities are available through both the MCP server (77 tools) and the CLI.
 
 ## Installation
 
@@ -175,30 +180,135 @@ semrush gaps mysite.com competitor.com -l 50
 semrush units
 ```
 
-## Available Tools & Commands
+## Available MCP Tools
 
-| MCP Tool | CLI Command | Description |
-|----------|-------------|-------------|
-| `semrush_domain_overview` | `semrush domain <domain>` | Domain overview (traffic, keywords, rankings) |
-| `semrush_domain_organic_keywords` | `semrush d <domain> --organic` | Organic keywords for a domain |
-| `semrush_domain_paid_keywords` | `semrush d <domain> --paid` | Paid keywords for a domain |
-| `semrush_competitors` | `semrush d <domain> --competitors` | Organic search competitors |
-| `semrush_keyword_overview` | `semrush kw <keyword>` | Keyword overview data |
-| `semrush_keyword_overview_single_db` | `semrush kw <keyword> -d <db>` | Detailed keyword data for specific database |
-| `semrush_batch_keyword_overview` | -- | Analyze up to 100 keywords at once |
-| `semrush_related_keywords` | `semrush kw <keyword> --related` | Related keyword discovery |
-| `semrush_broad_match_keywords` | `semrush kw <keyword> --broad` | Broad match / alternate queries |
-| `semrush_phrase_questions` | `semrush kw <keyword> --questions` | Question-based keywords |
-| `semrush_keyword_organic_results` | `semrush kw <keyword> --organic` | Domains ranking in organic results |
-| `semrush_keyword_paid_results` | `semrush kw <keyword> --paid` | Domains in paid search results |
-| `semrush_keyword_ads_history` | -- | 12-month history of domains bidding on a keyword |
-| `semrush_keyword_difficulty` | `semrush kd <keywords...>` | Difficulty index for ranking in top 10 |
-| `semrush_backlinks` | `semrush bl <target>` | Backlinks for a domain/URL |
-| `semrush_backlinks_domains` | `semrush bl <target> --domains` | Referring domains |
-| `semrush_traffic_summary` | `semrush traffic <domain>` | Traffic summary (requires .Trends) |
-| `semrush_traffic_sources` | `semrush traffic <domain> --sources` | Traffic sources (requires .Trends) |
-| `semrush_api_units_balance` | `semrush units` | Check API units balance |
-| -- | `semrush gaps <d1> <d2>` | Keyword gap analysis between two domains |
+### Domain Analytics (13 tools)
+
+| Tool | Description |
+|------|-------------|
+| `semrush_domain_overview` | Domain overview — traffic, keywords, rankings across all databases |
+| `semrush_domain_rank` | Domain rank in a specific database |
+| `semrush_domain_rank_history` | Historical rank data for a domain |
+| `semrush_rank_difference` | Domains with biggest rank changes |
+| `semrush_domain_organic_keywords` | Organic keywords for a domain |
+| `semrush_domain_paid_keywords` | Paid keywords for a domain |
+| `semrush_competitors` | Organic search competitors |
+| `semrush_paid_competitors` | Paid search competitors |
+| `semrush_domain_ads_history` | Domain's ad history over time |
+| `semrush_domain_organic_unique` | Unique organic pages for a domain |
+| `semrush_domain_adwords_unique` | Unique paid ad pages for a domain |
+| `semrush_domain_shopping` | Shopping/PLA keywords for a domain |
+| `semrush_domain_shopping_unique` | Unique shopping ad pages |
+
+### URL Analytics (5 tools)
+
+| Tool | Description |
+|------|-------------|
+| `semrush_url_organic` | Organic keywords for a specific URL |
+| `semrush_url_adwords` | Paid keywords for a specific URL |
+| `semrush_url_rank` | Rank data for a specific URL |
+| `semrush_url_rank_history` | Historical rank data for a URL |
+| `semrush_url_ranks` | Rank across all databases for a URL |
+
+### Subdomain Analytics (4 tools)
+
+| Tool | Description |
+|------|-------------|
+| `semrush_subdomain_rank` | Rank data for a subdomain |
+| `semrush_subdomain_ranks` | Rank across all databases for a subdomain |
+| `semrush_subdomain_rank_history` | Historical rank data for a subdomain |
+| `semrush_subdomain_organic` | Organic keywords for a subdomain |
+
+### Subfolder Analytics (7 tools)
+
+| Tool | Description |
+|------|-------------|
+| `semrush_subfolder_organic` | Organic keywords for a subfolder |
+| `semrush_subfolder_adwords` | Paid keywords for a subfolder |
+| `semrush_subfolder_rank` | Rank data for a subfolder |
+| `semrush_subfolder_ranks` | Rank across all databases for a subfolder |
+| `semrush_subfolder_rank_history` | Historical rank data for a subfolder |
+| `semrush_subfolder_organic_unique` | Unique organic pages in a subfolder |
+| `semrush_subfolder_adwords_unique` | Unique paid ad pages in a subfolder |
+
+### Backlinks (7 tools)
+
+| Tool | Description |
+|------|-------------|
+| `semrush_backlinks` | Backlinks for a domain/URL |
+| `semrush_backlinks_domains` | Referring domains |
+| `semrush_backlinks_overview` | Backlinks summary stats |
+| `semrush_backlinks_pages` | Pages with most backlinks |
+| `semrush_backlinks_anchors` | Anchor text distribution |
+| `semrush_backlinks_tld` | TLD distribution of backlinks |
+| `semrush_backlinks_categories` | Category distribution of backlinks |
+
+### Keyword Research (10 tools)
+
+| Tool | Description |
+|------|-------------|
+| `semrush_keyword_overview` | Keyword overview across all databases |
+| `semrush_keyword_overview_single_db` | Detailed keyword data for specific database |
+| `semrush_batch_keyword_overview` | Analyze up to 100 keywords at once |
+| `semrush_related_keywords` | Related keyword discovery |
+| `semrush_broad_match_keywords` | Broad match / alternate queries |
+| `semrush_phrase_questions` | Question-based keywords |
+| `semrush_keyword_organic_results` | Domains ranking in organic results |
+| `semrush_keyword_paid_results` | Domains in paid search results |
+| `semrush_keyword_ads_history` | 12-month history of domains bidding on a keyword |
+| `semrush_keyword_difficulty` | Difficulty index for ranking in top 10 |
+
+### Traffic & Audience (17 tools, requires .Trends subscription)
+
+| Tool | Description |
+|------|-------------|
+| `semrush_traffic_summary` | Traffic summary for domains |
+| `semrush_traffic_sources` | Traffic sources breakdown |
+| `semrush_traffic_destinations` | Where traffic goes after visiting |
+| `semrush_traffic_geo` | Geographic distribution of traffic |
+| `semrush_traffic_subdomains` | Traffic by subdomain |
+| `semrush_traffic_subfolders` | Traffic by subfolder |
+| `semrush_traffic_top_pages` | Highest-traffic pages |
+| `semrush_traffic_rank` | Traffic rank over time |
+| `semrush_traffic_social_media` | Social media traffic breakdown |
+| `semrush_audience_insights` | Audience overlap between domains |
+| `semrush_purchase_conversion` | Purchase conversion metrics |
+| `semrush_household_distribution` | Household size demographics |
+| `semrush_income_distribution` | Income demographics |
+| `semrush_education_distribution` | Education level demographics |
+| `semrush_occupation_distribution` | Occupation demographics |
+| `semrush_audience_interests` | Audience interest categories |
+| `semrush_traffic_accuracy` | Traffic data accuracy estimates |
+
+### Projects & Site Audit (13 tools)
+
+| Tool | Description |
+|------|-------------|
+| `semrush_list_projects` | List all projects |
+| `semrush_get_project` | Get project details |
+| `semrush_create_project` | Create a new project |
+| `semrush_update_project` | Update project settings |
+| `semrush_delete_project` | Delete a project |
+| `semrush_site_audit_info` | Site audit configuration and status |
+| `semrush_site_audit_snapshots` | List audit snapshots |
+| `semrush_site_audit_snapshot_detail` | Get snapshot details |
+| `semrush_site_audit_issues` | Audit issue metadata |
+| `semrush_site_audit_pages` | List audited pages |
+| `semrush_site_audit_page_detail` | Page-level audit details |
+| `semrush_site_audit_history` | Audit history |
+| `semrush_site_audit_launch` | Launch a new audit crawl |
+
+### Utility (1 tool)
+
+| Tool | Description |
+|------|-------------|
+| `semrush_api_units_balance` | Check API units balance |
+
+### CLI-Only Commands
+
+| CLI Command | Description |
+|-------------|-------------|
+| `semrush gaps <d1> <d2>` | Keyword gap analysis between two domains |
 
 ## Configuration
 

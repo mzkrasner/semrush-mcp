@@ -32,6 +32,7 @@ import {
   TrafficDomainsParamsSchema,
   TrendsAccuracyParamsSchema,
   TrendsAudienceInsightsParamsSchema,
+  TrendsPurchaseConversionParamsSchema,
   TrendsTargetParamsSchema,
   UrlNoDatabaseParamsSchema,
   UrlParamsSchema,
@@ -1071,7 +1072,7 @@ server.tool(
 server.tool(
   'semrush_purchase_conversion',
   'Get purchase conversion rate for a domain (requires .Trends, desktop only)',
-  TrendsTargetParamsSchema.shape,
+  TrendsPurchaseConversionParamsSchema.shape,
   READ_ONLY_ANNOTATIONS,
   async ({ target, country, display_date, limit }) => {
     try {

@@ -126,6 +126,19 @@ export class SemrushApiClient {
     return RETRYABLE.includes(status) && retryCount < MAX_RETRIES
   }
 
+  // Build query params and optional body for the HTTP method
+  private buildRequestParts(
+    method: string,
+    params: ApiQueryParams
+  ): { queryParams: ApiQueryParams; bodyData: ApiQueryParams | undefined } {
+    const sendsBody = method === 'post' || method === 'put'
+    const queryParams: ApiQueryParams = sendsBody
+      ? { key: this.apiKey }
+      : { ...params, key: this.apiKey }
+    const bodyData = sendsBody ? params : undefined
+    return { queryParams, bodyData }
+  }
+
   // Make API request with caching, rate limiting, and retry with exponential backoff
   private async makeRequest(
     url: string,
@@ -133,32 +146,31 @@ export class SemrushApiClient {
     options: AxiosRequestConfig = {},
     retryCount = 0
   ): Promise<SemrushApiResponse> {
-    // Add API key to parameters
-    const requestParams: ApiQueryParams = {
-      ...params,
-      key: this.apiKey,
-    }
+    const method = (options.method ?? 'get').toLowerCase()
+    const isGet = method === 'get'
+    const { queryParams, bodyData } = this.buildRequestParts(method, params)
 
-    // Create cache key from URL and params
-    const cacheKey = `${url}:${JSON.stringify(requestParams)}`
-
-    // Check cache first
-    const cachedResponse = apiCache.get<SemrushApiResponse>(cacheKey)
-    if (cachedResponse) {
-      logger.debug(`Cache hit for request: ${url}`)
-      return cachedResponse
+    // Only cache GET requests
+    const cacheKey = `${url}:${JSON.stringify(queryParams)}`
+    if (isGet) {
+      const cachedResponse = apiCache.get<SemrushApiResponse>(cacheKey)
+      if (cachedResponse) {
+        logger.debug(`Cache hit for request: ${url}`)
+        return cachedResponse
+      }
     }
 
     // Wait for rate limit allowance
     await rateLimiter.waitForRateLimit()
 
     try {
-      logger.debug(`Making request to: ${url}`)
+      logger.debug(`Making ${method.toUpperCase()} request to: ${url}`)
 
       const response: AxiosResponse<string> = await axios<string>({
-        method: options.method ?? 'get',
+        method,
         url,
-        params: requestParams,
+        params: queryParams,
+        ...(bodyData ? { data: bodyData } : {}),
         ...options,
       })
 
@@ -168,8 +180,9 @@ export class SemrushApiClient {
         headers: response.headers as Record<string, string>,
       }
 
-      // Cache successful response
-      apiCache.set(cacheKey, apiResponse)
+      if (isGet) {
+        apiCache.set(cacheKey, apiResponse)
+      }
 
       return apiResponse
     } catch (error: unknown) {
